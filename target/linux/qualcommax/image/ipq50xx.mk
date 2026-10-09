@@ -179,7 +179,6 @@ define Device/xiaomi_ax3000
   IMAGE/factory.ubi := append-ubi | pad-to 128k
   IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
   DEVICE_PACKAGES := \
-	ath11k-firmware-ipq5018 \
 	ath11k-firmware-ipq5018-qcn6122 \
 	kmod-ath11k-ahb \
 	kmod-qca-nss-dp \
