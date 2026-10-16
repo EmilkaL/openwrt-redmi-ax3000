@@ -1,0 +1,70 @@
+Subject: [PATCH] net: nss-dp: use SSDK for IPQ50xx 2.5G fixed links
+
+Handle IPQ50xx 2500base-x fixed links through the existing SSDK link path.
+Keep legacy fixed-PHY registration for other link modes.
+
+--- a/nss_dp_main.c
++++ b/nss_dp_main.c
+@@ -648,6 +648,32 @@
+ #endif
+ };
+ 
++#ifdef NSS_DP_IPQ50XX
++static bool nss_dp_uses_ssdk_fixed_link(struct device_node *np)
++{
++	struct device_node *fixed_link;
++	phy_interface_t interface;
++	u32 speed;
++	bool managed;
++
++	if (of_get_phy_mode(np, &interface) ||
++	    interface != PHY_INTERFACE_MODE_2500BASEX)
++		return false;
++
++	fixed_link = of_get_child_by_name(np, "fixed-link");
++	if (!fixed_link)
++		return false;
++
++	managed = !of_property_read_u32(fixed_link, "speed", &speed) &&
++		  speed == SPEED_2500 &&
++		  of_property_read_bool(fixed_link, "full-duplex") &&
++		  !of_find_property(fixed_link, "link-gpios", NULL);
++	of_node_put(fixed_link);
++
++	return managed;
++}
++#endif
++
+ /*
+  * nss_dp_of_get_pdata()
+  */
+@@ -658,6 +684,7 @@
+ 	uint8_t *maddr;
+ 	struct nss_dp_dev *dp_priv;
+ 	struct resource memres_devtree = {0};
++	bool ssdk_fixed_link = false;
+ #if (LINUX_VERSION_CODE > KERNEL_VERSION(6, 1, 0))
+ 	uint8_t mac_addr[ETH_ALEN];
+ #endif
+@@ -675,7 +702,11 @@
+ 	}
+ 
+ 	dp_priv->phy_node = of_parse_phandle(np, "phy-handle", 0);
+-	if(!dp_priv->phy_node) {
++#ifdef NSS_DP_IPQ50XX
++	if (!dp_priv->phy_node)
++		ssdk_fixed_link = nss_dp_uses_ssdk_fixed_link(np);
++#endif
++	if (!dp_priv->phy_node && !ssdk_fixed_link) {
+ 		if(of_phy_is_fixed_link(np)) {
+ 			int ret = of_phy_register_fixed_link(np);
+ 			if(ret < 0) {
+@@ -686,7 +717,7 @@
+ 		dp_priv->phy_node = of_node_get(np);
+ 	}
+ 
+-	if(!dp_priv->phy_node)
++	if (!dp_priv->phy_node && !ssdk_fixed_link)
+ 		pr_err("%s: no phy-handle or fixed-link found\n", np->name);
+ 
+ 	if (of_property_read_u32(np, "qcom,mactype", &hal_pdata->mactype)) {

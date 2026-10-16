@@ -166,6 +166,12 @@ linksys_mx_pre_upgrade() {
 }
 
 platform_check_image() {
+	case "$(board_name)" in
+	xiaomi,ax3000-v2)
+		echo "Xiaomi AX3000 V2 supports RAM boot only; persistent installation is not implemented."
+		return 1
+		;;
+	esac
 	return 0;
 }
 
@@ -179,6 +185,10 @@ platform_pre_upgrade() {
 
 platform_do_upgrade() {
 	case "$(board_name)" in
+	xiaomi,ax3000-v2)
+		echo "Xiaomi AX3000 V2 supports RAM boot only; persistent installation is not implemented."
+		return 1
+		;;
 	cmcc,pz-l8|\
 	elecom,wrc-x3000gs2|\
 	iodata,wn-dax3000gr)

@@ -1,0 +1,31 @@
+RockBlack-VPN/ip-address
+https://github.com/RockBlack-VPN/ip-address/tree/f2cbfbc01d80180f2c4a2c8f2ecc6ddb8299ad89
+Remote HEAD rechecked on 2026-10-16: f2cbfbc01d80180f2c4a2c8f2ecc6ddb8299ad89.
+Selected services: YouTube, Meta, Twitter/X, Netflix, OpenAI, Anthropic, Claude, Discord, Telegram, TikTok, Spotify, GitHub.
+Malformed CIDRs, reserved networks, Kinopoisk exceptions, and source prefixes broader than /15 were omitted before merging.
+The merged static list contains 289 IPv4 prefixes and has no IPv6 entries.
+ipv4.txt SHA256: 6c10beb0135bfcb89b05ba22ebac0f1a367792042efa86166312f1b939d78da3.
+The three additional Google ranges 74.125.0.0/16, 172.217.0.0/16, and 173.194.0.0/16 were rechecked against https://www.gstatic.com/ipranges/goog.json, creationTime 2026-10-16T07:15:57.521485.
+The RockBlack license is included in rockblack-license.txt.
+
+Create interface awgvpn with a separately issued private peer through LuCI, using network.example as a structural reference.
+Keep Route Allowed IPs disabled and supply a numeric IPv4 endpoint, the assigned tunnel address, and all obfuscation parameters from that peer.
+Run ra80-vpn check before the explicit ra80-vpn enable command.
+The package does not contain keys and does not activate routing during installation or first boot.
+Do not reuse a peer key simultaneously on this router and another router.
+Activation backs up network, firewall, dhcp, and ra80_vpn before making changes.
+Routing table 200, priorities 30010/30011, mark bit 0x00200000, LAN bridge br-lan, and WAN interface wan are reserved by this policy.
+
+Selected LAN IPv4 traffic uses the VPN regardless of TCP, UDP, QUIC, or other transport protocol.
+The nftables guard blocks selected destinations when the VPN route disappears, even if policy routing fails.
+The remaining LAN IPv4 destinations use the ordinary WAN route.
+Router-originated application traffic is not selected; only the designated DNS upstreams are sent through the VPN.
+IPv6 forwarding is blocked, LAN IPv6 advertisements are disabled, and AAAA replies are suppressed until a dual-stack VPN policy is configured separately.
+LAN TCP/UDP port 53 is redirected to the router, upstream DNS uses the VPN, and TCP/UDP port 853 is blocked.
+Browser and application secure DNS must be disabled for DNS-based selection; arbitrary DNS over HTTPS cannot be intercepted by this policy.
+The dynamic DNS set survives ordinary firewall reloads and has no expiration timer, but a router reboot clears it.
+After a router reboot, clear client DNS caches or reconnect clients before validating destinations outside the static list.
+Provider-local Google caches, previously cached addresses, new application domains, and arbitrary encrypted DNS may remain outside the selected sets.
+Shared CDN addresses can send unrelated services through the VPN, and the static list is not a complete or exclusive service boundary.
+Stopping this service intentionally keeps its nftables guards; it does not silently restore direct access to selected destinations.
+Client tests, VPN handshake checks, fail-closed checks, and DNS/QUIC checks on the real router remain necessary.

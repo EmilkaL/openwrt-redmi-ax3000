@@ -187,6 +187,24 @@ define Device/xiaomi_ax3000
 endef
 TARGET_DEVICES += xiaomi_ax3000
 
+define Device/xiaomi_ax3000-v2
+	$(call Device/FitImageLzma)
+	SOC := ipq5018
+	DEVICE_VENDOR := Xiaomi
+	DEVICE_MODEL := AX3000
+	DEVICE_VARIANT := V2 initramfs development
+	DEVICE_DTS_CONFIG := config@mp03.3
+	BLOCKSIZE := 128k
+	PAGESIZE := 2048
+	NAND_SIZE := 128m
+	IMAGE_SIZE := 30720k
+	IMAGES :=
+	DEVICE_PACKAGES := ath11k-firmware-ipq5018-qcn6122 \
+		-ath11k-firmware-ipq5018 kmod-ath11k-ahb kmod-qca-nss-dp \
+		wpad-basic-mbedtls
+endef
+TARGET_DEVICES += xiaomi_ax3000-v2
+
 define Device/xiaomi_ax6000
 	$(call Device/FitImage)
 	$(call Device/UbiFit)

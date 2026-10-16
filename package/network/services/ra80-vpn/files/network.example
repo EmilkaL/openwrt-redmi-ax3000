@@ -1,0 +1,13 @@
+config interface 'awgvpn'
+	option proto 'amneziawg'
+	option auto '0'
+	option mtu '1280'
+	option defaultroute '0'
+	option peerdns '0'
+	option tunlink 'wan'
+
+config amneziawg_awgvpn 'awgvpn_peer'
+	option disabled '1'
+	option route_allowed_ips '0'
+	option persistent_keepalive '25'
+	list allowed_ips '0.0.0.0/0'

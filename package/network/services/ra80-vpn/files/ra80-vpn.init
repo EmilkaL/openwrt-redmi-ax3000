@@ -1,0 +1,16 @@
+#!/bin/sh /etc/rc.common
+
+START=18
+STOP=89
+
+start() {
+	/usr/sbin/ra80-vpn load
+}
+
+stop() {
+	return 0
+}
+
+reload() {
+	start
+}
